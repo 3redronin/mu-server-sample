@@ -25,30 +25,26 @@ public class App {
             .addHandler(new RequestLoggingHandler())
             .addHandler(Method.GET, "/current-time", (request, response) -> {
                 response.status(200);
-                response.headers().set(HeaderNames.CONTENT_TYPE, ContentTypes.TEXT_PLAIN);
+                response.contentType(ContentTypes.TEXT_PLAIN);
                 response.write(Instant.now().toString());
                 return true;
             })
-            .addHandler(ResourceHandler.resourceHandler("src/main/resources/web", "/web")
+            .addHandler(ResourceHandler.fileOrClasspath("asrc/main/resources/web", "/web")
                 .withPathToServeFrom("/")
                 .withDefaultFile("index.html")
                 .build())
             .start();
         log.info("Server started at " + server.uri() + " and " + server.httpsUri());
 
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                log.info("Shutting down...");
-                server.stop();
-                log.info("Shut down complete.");
-            }
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            log.info("Shutting down...");
+            server.stop();
+            log.info("Shut down complete.");
         }));
 
     }
 
     private static class RequestLoggingHandler implements MuHandler {
-        @Override
         public boolean handle(MuRequest request, MuResponse response) throws Exception {
             log.info(request.method() + " " + request.uri());
             return false;
