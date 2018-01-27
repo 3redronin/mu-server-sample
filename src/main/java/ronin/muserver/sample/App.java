@@ -29,12 +29,13 @@ public class App {
                 response.write(Instant.now().toString());
                 return true;
             })
-            .addHandler(ResourceHandler.fileOrClasspath("asrc/main/resources/web", "/web")
+            .addHandler(ResourceHandler.fileOrClasspath("src/main/resources/web", "/web")
                 .withPathToServeFrom("/")
                 .withDefaultFile("index.html")
                 .build())
             .start();
-        log.info("Server started at " + server.uri() + " and " + server.httpsUri());
+
+        log.info("Server started at " + server.httpUri() + " and " + server.httpsUri());
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             log.info("Shutting down...");
