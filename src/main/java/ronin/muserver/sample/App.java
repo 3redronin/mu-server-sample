@@ -20,25 +20,26 @@ import static ronin.muserver.sample.Decoration.decorate;
 public class App {
     public static final Logger log = LoggerFactory.getLogger(App.class);
 
+    public static final MuServerBuilder mu_server_builder = MuServerBuilder.muServer()
+        .withHttpConnection(8080)
+        .withHttpsConnection(8443,
+            SSLContextBuilder.sslContext()
+                .withKeystoreFromClasspath("/keystore.jks")
+                .withKeystoreType("JKS")
+                .withKeystorePassword("Very5ecure")
+                .withKeyPassword("ActuallyNotSecure")
+                .build()
+        )
+        .addHandler(decorate((req, res) -> log.info(req.method() + " " + req.uri())))
+        .addHandler(plain_old_get("/current-time", req -> Instant.now().toString()))
+        .addHandler(maven_resources("/web")
+            .withPathToServeFrom("/")
+            .withDefaultFile("index.html")
+            .build());
+
     public static void main(String[] args) {
         log.info("Starting mu-server-sample app");
-        MuServer server = MuServerBuilder.muServer()
-            .withHttpConnection(8080)
-            .withHttpsConnection(8443,
-                SSLContextBuilder.sslContext()
-                    .withKeystoreFromClasspath("/keystore.jks")
-                    .withKeystoreType("JKS")
-                    .withKeystorePassword("Very5ecure")
-                    .withKeyPassword("ActuallyNotSecure")
-                    .build()
-            )
-            .addHandler(decorate((req, res) -> log.info(req.method() + " " + req.uri())))
-            .addHandler(plain_old_get("/current-time", req -> Instant.now().toString()))
-            .addHandler(maven_resources("/web")
-                .withPathToServeFrom("/")
-                .withDefaultFile("index.html")
-                .build())
-            .start();
+        MuServer server = mu_server_builder.start();
 
         log.info("Server started at " + server.httpUri() + " and " + server.httpsUri());
 
