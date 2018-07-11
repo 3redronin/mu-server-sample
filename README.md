@@ -1,6 +1,6 @@
 Sample app showing how to build and package a [mu-server](https://github.com/3redronin/mu-server) application.
 
-You can run locally by running `ronin.muserver.sample.App#main` or try building an uber jar.
+You can run locally by running `App#main` or try building an uber jar.
 
 ### Building the uber jar
 
