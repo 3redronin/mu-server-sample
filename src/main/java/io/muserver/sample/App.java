@@ -45,7 +45,7 @@ public class App {
     }
 
     private static class RequestLoggingHandler implements MuHandler {
-        public boolean handle(MuRequest request, MuResponse response) throws Exception {
+        public boolean handle(MuRequest request, MuResponse response) {
             log.info(request.method() + " " + request.uri());
             return false;
         }
